@@ -1,0 +1,7 @@
+name: Link to paragraph
+type: module
+description: Create block with links to paragraphs
+core: 8.x
+package: Custom
+dependencies:
+  - block
