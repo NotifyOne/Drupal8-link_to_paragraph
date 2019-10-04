@@ -54,7 +54,6 @@ class LinkToParagraphBlock extends BlockBase {
     return [
       '#theme' => 'link_to_paragraphs',
       '#title' => 'NOPE',
-//      '#markup' => 'fwsfddfsdf',
       '#paragraphs' => $titles,
     ];
   }
