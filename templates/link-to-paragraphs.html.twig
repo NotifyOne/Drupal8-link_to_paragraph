@@ -1,0 +1,8 @@
+{{ title }}
+<br>
+
+<select onchange="location = this.value;">
+{% for item in paragraphs %}
+  <option value="#paragraph-{{ item.id }}">{{ item.value }}</option>
+{% endfor %}
+</select>
