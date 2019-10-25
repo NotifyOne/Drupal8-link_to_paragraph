@@ -21,33 +21,28 @@ class LinkToParagraphBlock extends BlockBase {
     $node = \Drupal::routeMatch()->getParameter('node');
     if (!($node instanceof \Drupal\node\NodeInterface)) {
       // You can get nid and anything else you need from the node object.
-      return []; // TODO set default message if node empty
-    }
-    if (!($paragraph_field_items = $node->get('field_content')->getValue())) {
-      return []; // TODO set default message if node empty
+      return []; // TODO set default message if node empty.
     }
 
-    unset($node);
+    $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
-    // Get storage. It very useful for loading a small number of objects.
-    try {
-      $paragraph_storage = \Drupal::entityTypeManager()
-        ->getStorage('paragraph');
-    } catch (\Exception $exception) {
-      return []; // TODO set default message if node empty
-    }
-    // Collect paragraph field's ids.
-    $ids = array_column($paragraph_field_items, 'target_id');
-    // Load all paragraph objects.
-    $paragraphs_objects = $paragraph_storage->loadMultiple($ids);
+    $paragraphs = $node->get('field_content')->referencedEntities();
+
     $titles = [];
+
     /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
-    foreach ($paragraphs_objects as $paragraph) {
-      // Get field from the paragraph.
+    foreach ($paragraphs as $paragraph) {
+
+//       Get field from the paragraph.
+      if ($paragraph->hasTranslation($language)) {
+        $paragraph = $paragraph->getTranslation($language);
+      }
+
       $titles[] = [
         'id' => $paragraph->id(),
-        'value' => $paragraph->get('field_title')->value,
+        'value' => $paragraph->get('field_title')->getValue()[0]['value'],
       ];
+      unset($translate);
       // Do something with $text...
     }
 
@@ -69,6 +64,5 @@ class LinkToParagraphBlock extends BlockBase {
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['link_to_paragraph_settings'] = $form_state->getValue('link_to_paragraph_settings');
   }
-
 
 }
