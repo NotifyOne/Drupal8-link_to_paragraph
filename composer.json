@@ -1,0 +1,17 @@
+{
+  "name": "drupal/link_to_paragraphs",
+  "description": "Add anchor to paragraphs with drop-down list.",
+  "type": "drupal-module",
+  "license": "GPL-3.0",
+  "require": {
+    "drupal/core": "~8",
+    "drupal/drupal/paragraphs": "~1.9"
+  },
+  "authors": [
+    {
+      "name": "NotifyOne",
+      "email": "anton220812@gmail.com",
+      "role": "Developer"
+    }
+  ]
+}
