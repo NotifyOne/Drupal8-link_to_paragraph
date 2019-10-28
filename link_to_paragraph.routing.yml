@@ -1,0 +1,7 @@
+link_to_paragraph.configure:
+  path: '/admin/structure/ltpconf'
+  defaults:
+    _title: 'Link to paragraph configurate'
+    _form: 'Drupal\link_to_paragraph\Form\ConfigurateForm'
+  requirements:
+    _permission: 'administer site configuration'
