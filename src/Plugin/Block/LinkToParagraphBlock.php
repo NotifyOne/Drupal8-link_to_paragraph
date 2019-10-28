@@ -43,9 +43,10 @@ class LinkToParagraphBlock extends BlockBase {
         $paragraph = $paragraph->getTranslation($language);
       }
 
+      $type = \Drupal::config('link_to_paragraph.config')->get('paragraph');
       $titles[] = [
         'id' => $paragraph->id(),
-        'value' => $paragraph->get('field_title')->getValue()[0]['value'],
+        'value' => $paragraph->get($type)->getValue()[0]['value'],
       ];
       unset($translate);
       // Do something with $text...
