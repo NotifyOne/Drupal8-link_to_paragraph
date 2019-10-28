@@ -1,0 +1,7 @@
+link_to_paragraph.config:
+  type: config_entity
+  label: 'Configure link to paragraph'
+  mapping:
+    paragraph:
+      type: string
+      label: 'Paragraph'
