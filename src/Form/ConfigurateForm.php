@@ -29,45 +29,86 @@ class ConfigurateForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $bundles = \Drupal::service('entity.manager')
-      ->getBundleInfo('paragraph');
-    $paragraph_types = [];
-
-    foreach ($bundles as $key => $bundle) {
-      $paragraph_types[$key] = $bundle['label'];
+    $field_paragraphs = [];
+    try {
+      $field_paragraphs = $this->getAllBundles('paragraph');
     }
-    unset($bundles);
+    catch (\Exception $e) {
 
-    $paragraph_fields = [];
-    foreach ($paragraph_types as $key => $pt) {
-      $paragraph_fields[] = \Drupal::service('entity_field.manager')
-        ->getFieldDefinitions('paragraph', $key);
-    }
-    unset($paragraph_types);
-
-    array_filter($paragraph_fields, function ($type) {
-      return ($type instanceof FieldConfig);
-    });
-
-    $fields = [];
-
-    foreach ($paragraph_fields as $pfield) {
-      foreach ($pfield as $pkey => $pp) {
-        if (strpos($pkey, 'field_') === 0) {
-          $fields[$pkey] = $pp->get('label');
-        }
-      }
     }
 
     $form['paragraph'] = [
       '#type' => 'select',
       '#title' => $this->t('Field paragraphs'),
-      '#default_value' => $this->config('link_to_paragraph.config')->get('paragraph'),
-      '#options' => $fields,
+      '#default_value' => $this->config('link_to_paragraph.config')
+        ->get('paragraph'),
+      '#options' => $field_paragraphs,
     ];
+    unset($field_paragraphs);
 
+    $field_nodes = [];
+    try {
+      $field_nodes = $this->getAllBundles('node');
+    }
+    catch (\Exception $e) {
+
+    }
+
+    $form['nodefield'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Field paragraphs'),
+      '#default_value' => $this->config('link_to_paragraph.config')
+        ->get('nodefield'),
+      '#options' => $field_nodes,
+    ];
+    unset($field_nodes);
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * Function for get bundles on node or paragraphs.
+   *
+   * @param string $type
+   *   Node or paragraph.
+   *
+   * @return array
+   *   ['machine_name' => 'label']
+   *
+   * @throws \Exception
+   */
+  protected function getAllBundles($type) {
+    if (!('node' === $type) && !('paragraph' === $type)) {
+      throw new \Exception('LinkToParagraphConfigure: ' .
+        __FILE__ . ':' . __CLASS__ . ':' . __METHOD__ . ': ' .
+        $type . ' type is not allow');
+    }
+
+    $fields = [];
+    foreach (\Drupal::service('entity_type.bundle.info')
+      ->getBundleInfo($type) as $key => $content) {
+      $fields[] = \Drupal::service('entity_field.manager')
+        ->getFieldDefinitions($type, $key);
+    }
+    unset($content);
+
+    foreach ($fields as $f) {
+      array_filter($f, function ($type) {
+        return ($type instanceof FieldConfig);
+      });
+    }
+
+    $field = [];
+
+    foreach ($fields as $f) {
+      foreach ($f as $key => $nn) {
+        if (strpos($key, 'field_') === 0) {
+          $field[$key] = $nn->get('label');
+        }
+      }
+    }
+
+    return $field;
   }
 
   /**
