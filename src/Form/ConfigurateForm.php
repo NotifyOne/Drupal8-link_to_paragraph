@@ -108,6 +108,12 @@ class ConfigurateForm extends ConfigFormBase {
       }
     }
 
+    // Setup value as 'name | machine_name'.
+    array_walk($field, function (&$value, $key) {
+      $value .= ' | ' . $key;
+    });
+
+
     return $field;
   }
 
