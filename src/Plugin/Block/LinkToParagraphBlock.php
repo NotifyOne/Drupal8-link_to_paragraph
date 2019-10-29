@@ -76,7 +76,9 @@ class LinkToParagraphBlock extends BlockBase {
 
     $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
-    $paragraphs = $node->get('field_content')->referencedEntities();
+    $paragraphs = $node->get(
+      \Drupal::config('link_to_paragraph.config')->get('node_field')
+    )->referencedEntities();
 
     $titles = [];
 
@@ -88,10 +90,11 @@ class LinkToParagraphBlock extends BlockBase {
         $paragraph = $paragraph->getTranslation($language);
       }
 
-      $type = \Drupal::config('link_to_paragraph.config')->get('paragraph');
       $titles[] = [
         'id' => $paragraph->id(),
-        'value' => $paragraph->get($type)->getValue()[0]['value'],
+        'value' => $paragraph->get(
+          \Drupal::config('link_to_paragraph.config')->get('paragraph')
+        )->getValue()[0]['value'],
       ];
       unset($translate);
       // Do something with $text...
