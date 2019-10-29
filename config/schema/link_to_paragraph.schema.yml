@@ -5,6 +5,6 @@ link_to_paragraph.config:
     paragraph:
       type: string
       label: 'Paragraph field'
-    nodefield:
+    node_field:
       type: string
       label: 'Node field with paragraph'

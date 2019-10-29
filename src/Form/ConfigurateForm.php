@@ -54,11 +54,11 @@ class ConfigurateForm extends ConfigFormBase {
 
     }
 
-    $form['nodefield'] = [
+    $form['node_field'] = [
       '#type' => 'select',
       '#title' => $this->t('Field paragraphs'),
       '#default_value' => $this->config('link_to_paragraph.config')
-        ->get('nodefield'),
+        ->get('node_field'),
       '#options' => $field_nodes,
     ];
     unset($field_nodes);
@@ -117,6 +117,7 @@ class ConfigurateForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('link_to_paragraph.config')
       ->set('paragraph', $form_state->getValue('paragraph'))
+      ->set('node_field', $form_state->getValue('node_field'))
       ->save();
     parent::submitForm($form, $form_state);
   }
