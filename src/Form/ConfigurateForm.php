@@ -102,6 +102,9 @@ class ConfigurateForm extends ConfigFormBase {
 
     foreach ($fields as $f) {
       foreach ($f as $key => $nn) {
+        if ($nn->getSettings()['handler'] !== 'default:paragraph') {
+          continue;
+        }
         if (strpos($key, 'field_') === 0) {
           $field[$key] = $nn->get('label');
         }
