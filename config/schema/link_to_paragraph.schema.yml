@@ -4,4 +4,7 @@ link_to_paragraph.config:
   mapping:
     paragraph:
       type: string
-      label: 'Paragraph'
+      label: 'Paragraph field'
+    nodefield:
+      type: string
+      label: 'Node field with paragraph'
