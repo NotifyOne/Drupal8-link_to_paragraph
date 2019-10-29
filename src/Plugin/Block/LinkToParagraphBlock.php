@@ -29,14 +29,15 @@ class LinkToParagraphBlock extends BlockBase {
    *   If not exist node.
    */
   protected function getCurrentNode() {
+    $nid = NULL;
     // Try get node by routing (block in node page).
     if (($node = \Drupal::routeMatch()->getParameter('node'))
       instanceof NodeInterface) {
-      return $node;
+      $nid = $node->id();
     }
 
     // Try get node by page_manager_page_variant.
-    if (($parameters = \Drupal::routeMatch()
+    if (!$nid && ($parameters = \Drupal::routeMatch()
       ->getParameter('page_manager_page_variant')) instanceof PageVariant) {
       $context = $parameters->getContexts();
       foreach ($context as $key => $item) {
@@ -51,14 +52,14 @@ class LinkToParagraphBlock extends BlockBase {
         if (!$item->hasContextValue('contextData')) {
           continue;
         }
-        $nid = $contextData = $item->getContextValue('contextData')->id();
-
-        $node = \Drupal::service('entity.manager')
-          ->getStorage('node')->load($nid);
-
-        return $node;
+        $nid = $item->getContextValue('contextData')->id();
       }
     }
+    if ($nid) {
+      return \Drupal::service('entity.manager')
+        ->getStorage('node')->load($nid);
+    }
+
     throw new \Exception('LinkToParagraphBlock: ' .
       __FILE__ . ':' . __CLASS__ . ':' . __METHOD__ . ': not found node');
   }
@@ -75,7 +76,9 @@ class LinkToParagraphBlock extends BlockBase {
     }
 
     $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
-
+    if ($node->hasTranslation($language)) {
+      $node = $node->getTranslation($language);
+    }
     $paragraphs = $node->get(
       \Drupal::config('link_to_paragraph.config')->get('node_field')
     )->referencedEntities();
