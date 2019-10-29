@@ -7,6 +7,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Drupal\page_manager\Entity\PageVariant;
 
 /**
  * Provides a block with a simple text.
@@ -19,13 +20,57 @@ use Drupal\node\NodeInterface;
 class LinkToParagraphBlock extends BlockBase {
 
   /**
+   * Function return node.
+   *
+   * @return \Drupal\node\NodeInterface
+   *   Return Node of False if not found
+   *
+   * @throws \Exception
+   *   If not exist node.
+   */
+  protected function getCurrentNode() {
+    // Try get node by routing (block in node page).
+    if (($node = \Drupal::routeMatch()->getParameter('node'))
+      instanceof NodeInterface) {
+      return $node;
+    }
+
+    // Try get node by page_manager_page_variant.
+    if (($parameters = \Drupal::routeMatch()
+      ->getParameter('page_manager_page_variant')) instanceof PageVariant) {
+      $context = $parameters->getContexts();
+      foreach ($context as $key => $item) {
+        if ('current_user' === $key) {
+          continue;
+        }
+        if ('language_interface' === $key) {
+          continue;
+        }
+
+        /** @var $item \Drupal\page_manager\Context\EntityLazyLoadContext */
+        if (!$item->hasContextValue('contextData')) {
+          continue;
+        }
+        $nid = $contextData = $item->getContextValue('contextData')->id();
+
+        $node = \Drupal::service('entity.manager')
+          ->getStorage('node')->load($nid);
+
+        return $node;
+      }
+    }
+    throw new \Exception('LinkToParagraphBlock: ' .
+      __FILE__ . ':' . __CLASS__ . ':' . __METHOD__ . ': not found node');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function build() {
-    $node = \Drupal::routeMatch()->getParameter('node');
-    if (!($node instanceof NodeInterface)) {
-      // You can get nid and anything else you need from the node object.
-      // TODO set default message if node empty.
+    try {
+      $node = $this->getCurrentNode();
+    }
+    catch (\Exception $e) {
       return [];
     }
 
