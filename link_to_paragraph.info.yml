@@ -5,3 +5,4 @@ core: 8.x
 package: Custom
 dependencies:
   - block
+configure: link_to_paragraph.configure
