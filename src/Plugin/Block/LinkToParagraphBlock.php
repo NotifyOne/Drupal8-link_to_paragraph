@@ -73,6 +73,7 @@ class LinkToParagraphBlock extends BlockBase {
     }
     catch (\Exception $e) {
       return [];
+      // TODO: Change text if node not found.
     }
 
     $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
