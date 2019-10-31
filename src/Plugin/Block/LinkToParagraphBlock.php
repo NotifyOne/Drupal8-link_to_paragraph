@@ -79,9 +79,16 @@ class LinkToParagraphBlock extends BlockBase {
     if ($node->hasTranslation($language)) {
       $node = $node->getTranslation($language);
     }
-    $paragraphs = $node->get(
-      \Drupal::config('link_to_paragraph.config')->get('node_field')
-    )->referencedEntities();
+
+    try {
+      $paragraphs = $node->get(
+        \Drupal::config('link_to_paragraph.config')->get('node_field')
+      )->referencedEntities();
+    }
+    catch (\Exception $e) {
+      return [];
+      // TODO: Change text if not found node_field.
+    }
 
     $titles = [];
 
