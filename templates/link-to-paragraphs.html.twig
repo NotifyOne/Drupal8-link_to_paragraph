@@ -2,8 +2,8 @@
   {{ title }}
   <br>
 {% endif %}
-<select onchange="document.getElementById(this.value).scrollIntoView();">
+<select onchange="document.getElementsByClassName('paragraph')[this.value].scrollIntoView();">
 {% for item in paragraphs %}
-  <option value="paragraph-{{ item.id }}">{{ item.value }}</option>
+  <option value="{{ loop.index0 }}">{{ item.value }}</option>
 {% endfor %}
 </select>
