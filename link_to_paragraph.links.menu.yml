@@ -1,0 +1,5 @@
+link_to_paragraph.configurate:
+  title: 'Link to paragraph settings'
+  parent: system.admin_config_content
+  description: 'Settings for the link to paragraph module.'
+  route_name: link_to_paragraph.configure
